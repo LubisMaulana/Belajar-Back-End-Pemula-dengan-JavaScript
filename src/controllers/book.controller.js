@@ -6,9 +6,9 @@ class BookController {
     this.books = new Book(books);
   }
 
-  addBook(request, h) {
+  addBook = (request, h) => {
     const {
-      name, year, author, summary, publisher, pageCount, readPage, finished, reading,
+      name, year, author, summary, publisher, pageCount, readPage, reading,
     } = request.payload;
 
     if (!name) {
@@ -33,7 +33,6 @@ class BookController {
       publisher,
       pageCount,
       readPage,
-      finished,
       reading,
     });
 
@@ -44,15 +43,16 @@ class BookController {
     }).code(201);
   }
 
-  getBooks(_, h) {
-    const allBooks = this.books.getBooks();
+  getBooks = (request, h) => {
+    const { reading, name, finished } = request.query;
+    const allBooks = this.books.getBooks(reading, name, finished);
     return h.response({
       status: 'success',
       data: { books: allBooks },
     }).code(200);
   }
 
-  getBookById(request, h) {
+  getBookById = (request, h) => {
     const { bookId } = request.params;
     const book = this.books.getBookById(bookId);
 
@@ -69,10 +69,10 @@ class BookController {
     }).code(200);
   }
 
-  editBook(request, h) {
+  editBook = (request, h) => {
     const { bookId } = request.params;
     const {
-      name, year, author, summary, publisher, pageCount, readPage, finished, reading,
+      name, year, author, summary, publisher, pageCount, readPage, reading,
     } = request.payload;
 
     if (!name) {
@@ -90,7 +90,7 @@ class BookController {
     }
 
     const updated = this.books.editBook(bookId, {
-      name, year, author, summary, publisher, pageCount, readPage, finished, reading,
+      name, year, author, summary, publisher, pageCount, readPage, reading,
     });
 
     if (!updated) {
@@ -106,7 +106,7 @@ class BookController {
     }).code(200);
   }
 
-  deleteBook(request, h) {
+  deleteBook = (request, h) => {
     const { bookId } = request.params;
     const deleted = this.books.deleteBook(bookId);
 

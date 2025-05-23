@@ -13,6 +13,7 @@ class Book {
     const book = {
       id: Book.#createId(),
       ...data,
+      finished: data.pageCount === data.readPage,
       insertedAt: Date.now(),
       updatedAt: Date.now(),
     };
@@ -21,8 +22,21 @@ class Book {
     return book.id;
   }
 
-  getBooks() {
-    return this.books.map(({ id, name, publisher }) => ({
+  getBooks(reading = "", name = "", finished = "") {
+    let filterBooks = this.books;
+    if(reading !== ""){
+      filterBooks = filterBooks.filter(item => item.reading === (reading === '1'));
+    }
+
+    if(finished !== ""){
+      filterBooks = filterBooks.filter(item => item.finished === (finished === '1'));
+    }
+
+    if(name !== ""){
+      filterBooks = filterBooks.filter(item => item.name.toUpperCase().includes(name.toUpperCase()));
+    }
+
+    return filterBooks.map(({ id, name, publisher }) => ({
       id, name, publisher,
     }));
   }
@@ -40,6 +54,7 @@ class Book {
     this.books[index] = {
       ...this.books[index],
       ...data,
+      finished: data.pageCount === data.readPage,
       updatedAt: Date.now(),
     };
 

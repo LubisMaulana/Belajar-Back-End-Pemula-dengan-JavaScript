@@ -1,3 +1,3 @@
 const books = [];
 
-export { books };
+export default books;

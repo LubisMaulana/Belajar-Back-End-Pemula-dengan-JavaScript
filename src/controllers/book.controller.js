@@ -1,123 +1,127 @@
-import { Book } from '../models/book.model';
-import { books } from '../data/books';
+import Book from '../models/book.model.js';
+import books from '../data/books.js';
 
 class BookController {
-    constructor() {
-        this.books = new Book(books);
+  constructor() {
+    this.books = new Book(books);
+  }
+
+  addBook(request, h) {
+    const {
+      name, year, author, summary, publisher, pageCount, readPage, finished, reading,
+    } = request.payload;
+
+    if (!name) {
+      return h.response({
+        status: 'fail',
+        message: 'Gagal menambahkan buku. Mohon isi nama buku',
+      }).code(400);
     }
 
-    addBook(request, h) {
-        const { name, year, author, summary, publisher, pageCount, readPage, finished, reading } = request.payload;
+    if (readPage > pageCount) {
+      return h.response({
+        status: 'fail',
+        message: 'Gagal menambahkan buku. readPage tidak boleh lebih besar dari pageCount',
+      }).code(400);
+    }
 
-        if (!name) {
-            return h.response({
-                status: 'fail',
-                message: 'Gagal menambahkan buku. Mohon isi nama buku',
-            }).code(400);
-        }
+    const id = this.books.createBook({
+      name,
+      year,
+      author,
+      summary,
+      publisher,
+      pageCount,
+      readPage,
+      finished,
+      reading,
+    });
 
-        if (readPage > pageCount) {
-            return h.response({
-                status: 'fail',
-                message: 'Gagal menambahkan buku. readPage tidak boleh lebih besar dari pageCount',
-            }).code(400);
-        }
+    return h.response({
+      status: 'success',
+      message: 'Buku berhasil ditambahkan',
+      data: { bookId: id },
+    }).code(201);
+  }
 
-        const id = this.books.createBook({
-            name,
-            year,
-            author,
-            summary,
-            publisher,
-            pageCount,
-            readPage,
-            finished,
-            reading
-        });
+  getBooks(_, h) {
+    const allBooks = this.books.getBooks();
+    return h.response({
+      status: 'success',
+      data: { books: allBooks },
+    }).code(200);
+  }
 
-        return h.response({
-            status: 'success',
-            message: 'Buku berhasil ditambahkan',
-            data: { bookId: id },
-        }).code(201);
-    };
+  getBookById(request, h) {
+    const { bookId } = request.params;
+    const book = this.books.getBookById(bookId);
 
-    getBooks(_, h) {
-        const allBooks = this.books.getBooks();
-        return h.response({
-            status: 'success',
-            data: { books: allBooks },
-        }).code(200);
-    };
+    if (!book) {
+      return h.response({
+        status: 'fail',
+        message: 'Buku tidak ditemukan',
+      }).code(404);
+    }
 
-    getBookById(request, h) {
-        const { id } = request.params;
-        const book = this.books.getBookById(id);
+    return h.response({
+      status: 'success',
+      data: { book },
+    }).code(200);
+  }
 
-        if (!book) {
-            return h.response({
-                status: 'fail',
-                message: 'Buku tidak ditemukan',
-            }).code(404);
-        }
+  editBook(request, h) {
+    const { bookId } = request.params;
+    const {
+      name, year, author, summary, publisher, pageCount, readPage, finished, reading,
+    } = request.payload;
 
-        return h.response({
-            status: 'success',
-            data: { book },
-        }).code(200);
-    };
+    if (!name) {
+      return h.response({
+        status: 'fail',
+        message: 'Gagal memperbarui buku. Mohon isi nama buku',
+      }).code(400);
+    }
 
-    editBook(request, h) {
-        const { id } = request.params;
-        const { name, year, author, summary, publisher, pageCount, readPage, finished, reading } = request.payload;
+    if (readPage > pageCount) {
+      return h.response({
+        status: 'fail',
+        message: 'Gagal memperbarui buku. readPage tidak boleh lebih besar dari pageCount',
+      }).code(400);
+    }
 
-        if (!name) {
-            return h.response({
-                status: 'fail',
-                message: 'Gagal memperbarui buku. Mohon isi nama buku',
-            }).code(400);
-        }
+    const updated = this.books.editBook(bookId, {
+      name, year, author, summary, publisher, pageCount, readPage, finished, reading,
+    });
 
-        if (readPage > pageCount) {
-            return h.response({
-                status: 'fail',
-                message: 'Gagal memperbarui buku. readPage tidak boleh lebih besar dari pageCount',
-            }).code(400);
-        }
+    if (!updated) {
+      return h.response({
+        status: 'fail',
+        message: 'Gagal memperbarui buku. Id tidak ditemukan',
+      }).code(404);
+    }
 
-        const updated = this.books.editBook(id, {
-            name, year, author, summary, publisher, pageCount, readPage, finished, reading,
-        });
+    return h.response({
+      status: 'success',
+      message: 'Buku berhasil diperbarui',
+    }).code(200);
+  }
 
-        if (!updated) {
-            return h.response({
-                status: 'fail',
-                message: 'Gagal memperbarui buku. Id tidak ditemukan',
-            }).code(404);
-        }
+  deleteBook(request, h) {
+    const { bookId } = request.params;
+    const deleted = this.books.deleteBook(bookId);
 
-        return h.response({
-            status: 'success',
-            message: 'Buku berhasil diperbarui',
-        }).code(200);
-    };
+    if (!deleted) {
+      return h.response({
+        status: 'fail',
+        message: 'Buku gagal dihapus. Id tidak ditemukan',
+      }).code(404);
+    }
 
-    deleteBook(request, h) {
-        const { id } = request.params;
-        const deleted = this.books.deleteBook(id);
-
-        if (!deleted) {
-            return h.response({
-                status: 'fail',
-                message: 'Buku gagal dihapus. Id tidak ditemukan',
-            }).code(404);
-        }
-
-        return h.response({
-            status: 'success',
-            message: 'Buku berhasil dihapus',
-        }).code(200);
-    };
+    return h.response({
+      status: 'success',
+      message: 'Buku berhasil dihapus',
+    }).code(200);
+  }
 }
 
-export { BookController };
+export default BookController;

@@ -22,18 +22,22 @@ class Book {
     return book.id;
   }
 
-  getBooks(reading = "", name = "", finished = "") {
+  getBooks(readingBook = '', nameBook = '', finishedBook = '') {
     let filterBooks = this.books;
-    if(reading !== ""){
-      filterBooks = filterBooks.filter(item => item.reading === (reading === '1'));
+    if (readingBook !== '') {
+      filterBooks = filterBooks.filter((item) => item.reading === (readingBook === '1'));
     }
 
-    if(finished !== ""){
-      filterBooks = filterBooks.filter(item => item.finished === (finished === '1'));
+    if (finishedBook !== '') {
+      filterBooks = filterBooks.filter((item) => item.finished === (finishedBook === '1'));
     }
 
-    if(name !== ""){
-      filterBooks = filterBooks.filter(item => item.name.toUpperCase().includes(name.toUpperCase()));
+    if (nameBook !== '') {
+      filterBooks = filterBooks.filter(
+        (item) => item.name.toUpperCase().includes(
+          nameBook.toUpperCase(),
+        ),
+      );
     }
 
     return filterBooks.map(({ id, name, publisher }) => ({

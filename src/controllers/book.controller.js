@@ -41,7 +41,7 @@ class BookController {
       message: 'Buku berhasil ditambahkan',
       data: { bookId: id },
     }).code(201);
-  }
+  };
 
   getBooks = (request, h) => {
     const { reading, name, finished } = request.query;
@@ -50,7 +50,7 @@ class BookController {
       status: 'success',
       data: { books: allBooks },
     }).code(200);
-  }
+  };
 
   getBookById = (request, h) => {
     const { bookId } = request.params;
@@ -67,7 +67,7 @@ class BookController {
       status: 'success',
       data: { book },
     }).code(200);
-  }
+  };
 
   editBook = (request, h) => {
     const { bookId } = request.params;
@@ -104,7 +104,7 @@ class BookController {
       status: 'success',
       message: 'Buku berhasil diperbarui',
     }).code(200);
-  }
+  };
 
   deleteBook = (request, h) => {
     const { bookId } = request.params;
@@ -121,7 +121,7 @@ class BookController {
       status: 'success',
       message: 'Buku berhasil dihapus',
     }).code(200);
-  }
+  };
 }
 
 export default BookController;
